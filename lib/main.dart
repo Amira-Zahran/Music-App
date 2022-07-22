@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-//import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:music_app/APIs/Tracks-Model.dart';
+import 'package:music_app/TrackDetails.dart';
 
-import 'APIs/BLoC.dart';
+import 'APIs/Global.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  BLoC bLoC = BLoC();
 
   @override
   Widget build(BuildContext context) {
@@ -51,40 +50,28 @@ class _MyHomePageState extends State<MyHomePage> {
           Center(child: StreamBuilder<UnmodifiableListView<TrackList>>(
               stream: bLoC.TracksStream,
               builder: (context, snapshot) {
-                return CarouselSlider(
-                  options: CarouselOptions(height: 380, autoPlay: true,scrollDirection: Axis.vertical,viewportFraction: 0.32,),
-                  items: snapshot.data!.where((element) => element.track!.instrumental == 0 ).map((e) =>
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 60.0, right: 60),
-                        child: SizedBox(
-                          width: 250, height: 70,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            child:
-                            //e.type!.split('').first}T' : e.type!.split('').first'${e.type!.split('').first}T' : e.type!.split('').first}
-                            //e.type!.contains('TakeAway') ? Icon(Icons.fastfood, color: Color.fromRGBO(14, 35, 46, 1),) : Icon(Icons.baby_changing_station),
-                            Center(
-                              child: Text(
-                                 '${e.track!.trackName}',
-                                /*'Din in'' ${e.orderId}',*/
-                                //'${e.type!.contains('Floor') ? '${e.type!.split('Din-in')}' : e.type!.split('TakeAway')} ${e.orderId}',
-                                style: const TextStyle(
-                                  fontSize: 33,
-                                  fontWeight: FontWeight
-                                      .bold,
-                                  color: Color.fromRGBO(
-                                      249, 183, 0, 1),
-                                ),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.circular(10),
-                              color: Color.fromRGBO(
-                                  14, 35, 46, 1),
-                            ),
-                          ),
-                        ),)).toList(),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: snapshot.data!.map((e) =>
+                  GestureDetector(
+                    onTap: (){
+                      currentTrack = e.track!.trackId as Track;
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> const TrackDetails()));
+                    },
+                    child: ConditionalBuilder(
+                      condition: snapshot.data != null,
+                      builder: (BuildContext context) {
+                        return Row(
+                          children: [
+                            const Icon(Icons.music_note),
+                            Text('${e.track!.trackName}'),
+                            Text('${e.track!.artistName}'),
+                          ],
+                        );
+                      }, fallback: (BuildContext context) { return const Center(child: Text('NO INTERNET CONNECTION', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),); },
+                    ),
+                  ),
+                  ).toList(),
                 );
               })
           ),

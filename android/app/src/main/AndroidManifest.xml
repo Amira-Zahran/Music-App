@@ -3,7 +3,10 @@
    <application
         android:label="music_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+
+        android:usesClearTextTraffic="true"
+   >
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,4 +34,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
